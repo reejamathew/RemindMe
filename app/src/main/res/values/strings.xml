@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">RemindMe</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="helloText">Hello</string>
+    <string name="no_account_exists">Don\'t have an account?</string>
+    <string name="welcome_back_text">Welcome Back to RemindMe</string>
+    <string name="login_text">Login to your account</string>
+    <string name="welcome">Welcome to RemindMe</string>
+    <string name="create_account">Create an account</string>
+    <string name="already_account">Already have an account?</string>
+    <string name="user_name">User Name</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+</resources>
