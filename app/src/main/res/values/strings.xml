@@ -14,4 +14,12 @@
     <string name="user_name">User Name</string>
     <string name="password">Password</string>
     <string name="confirm_password">Confirm Password</string>
+    <string name="add_an_item">Add an Item</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="submit">Submit</string>
+    <string name="cancel">Cancel</string>
+
 </resources>
