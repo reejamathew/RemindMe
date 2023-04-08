@@ -12,11 +12,8 @@
         android:layout_margin="15dp"
         android:scrollbars="none">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
 
-            <LinearLayout
+        <LinearLayout
                 android:id="@+id/container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -161,38 +158,37 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:weightSum="2"
+                    android:layout_marginTop="24dp">
 
                     <Button
                         android:id="@+id/submitButton"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_margin="20dp"
                         android:backgroundTint="@color/theme_color"
                         android:text="@string/submit"
                         android:textAllCaps="false"
                         android:textColor="@color/white"
+                        android:layout_weight="1"
                         />
 
                     <Button
                         android:id="@+id/cancelButton"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_margin="20dp"
-                        android:backgroundTint="@color/theme_color"
+                        android:layout_weight="1"
                         android:text="@string/cancel"
                         android:textAllCaps="false"
-                        android:textColor="@color/white"
+                        android:textColor="@color/theme_color"
+                        android:backgroundTint="@android:color/background_light"
                         />
 
                 </LinearLayout>
-
-
-
             </LinearLayout>
 
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
 </LinearLayout>
