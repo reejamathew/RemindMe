@@ -1,11 +1,20 @@
 package com.example.remindme.authentication
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
+import android.widget.Toast
+import androidx.navigation.findNavController
+import com.example.remindme.FireBaseDataManagement
 import com.example.remindme.R
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -18,43 +27,59 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class SignInFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    var email:String = ""
+    var password:String = ""
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        val view = inflater.inflate(R.layout.fragment_sign_in, container, false);
+        val emailTextView = view.findViewById<TextView>(R.id.inputEmailSignIn)
+        val passwordTextView = view.findViewById<TextView>(R.id.inputPasswordSignIn)
+        val signInButton =  view.findViewById<Button>(R.id.signInScreenSignInButton)
+        auth = Firebase.auth
+
+        signInButton.setOnClickListener {
+            email = emailTextView.text.toString()
+            password = passwordTextView.text.toString()
+            if (validateFields()) {
+                var signInTask = auth.signInWithEmailAndPassword(email, password)
+                signInTask.addOnSuccessListener {
+
+         //  FireBaseDataManagement().getAllReminders("asd@gmail.com")
+
+                  //  FireBaseDataManagement().uploadReminder(
+                     //   requireContext(),"sample1","sample text1","Mar 11, 2016 6:30:00 PM","","asd@gmail.com")
+                    view.findNavController().navigate(R.id.action_signInFragment_to_reminderFragment)
+                }
+                signInTask.addOnFailureListener{
+                    Log.w("createUserWithEmail:failure", signInTask.exception)
+                    Toast.makeText(requireActivity(), "Invalid Credentials", Toast.LENGTH_SHORT)
+                        .show()
+                }
+
+            }
+        }
+            val signUpTextView =  view.findViewById<TextView>(R.id.signUpInSignInTextView)
+            signUpTextView.setOnClickListener{
+                view.findNavController().navigate(R.id.action_signInFragment_to_signUpFragment)
+
+            }
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_sign_in, container, false)
+        return view
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment SignInFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            SignInFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    fun validateFields(): Boolean {
+
+        if (email == "" && !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(this@SignInFragment.requireActivity(), "Please enter valid email", Toast.LENGTH_SHORT).show()
+            return false
+        } else if (password.length<6) {
+            Toast.makeText(this@SignInFragment.requireActivity(), "Password should be minimum six characters", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        return true
     }
 }
