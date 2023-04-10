@@ -3,12 +3,11 @@ package com.example.remindme
 import android.app.ProgressDialog
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import com.example.remindme.model.Reminder
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+
 
 class FireBaseDataManagement {
     private lateinit var database: DatabaseReference
@@ -54,7 +53,7 @@ class FireBaseDataManagement {
                 for (e in snapshot.children) {
 
                     val reminder = e.getValue(Reminder::class.java)
-
+                    Log.w("reminder key",e.key.toString())
                     if (reminder != null) {
                         if(reminder.email == email){
                             reminders.add(reminder!!)
@@ -72,5 +71,44 @@ class FireBaseDataManagement {
 
 
         return reminders
+    }
+    fun updateReminder(
+        context: Context,
+        title: String,
+        description: String,
+        date: String,
+        imageFileUri: String,
+        emailId: String,key:String
+    ) {
+
+        database = Firebase.database.reference
+        val reminder = Reminder(title, description,date,imageFileUri,emailId)
+
+        database.child("reminders").child(key).setValue(reminder)
+            .addOnSuccessListener{
+
+                Log.w("on success","success")
+            }
+            .addOnFailureListener{
+                Log.w("on failure","failure")
+            }
+
+    }
+    fun deleteReminder(key:String){
+        val ref = FirebaseDatabase.getInstance().reference
+        val applesQuery = ref.child("reminders").child(key)
+
+        applesQuery.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                for (appleSnapshot in dataSnapshot.children) {
+                    appleSnapshot.ref.removeValue()
+                    Log.e("success","success")
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.e("cancelled", "onCancelled", databaseError.toException())
+            }
+        })
     }
 }

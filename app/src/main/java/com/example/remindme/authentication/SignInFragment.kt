@@ -47,9 +47,10 @@ class SignInFragment : Fragment() {
             if (validateFields()) {
                 var signInTask = auth.signInWithEmailAndPassword(email, password)
                 signInTask.addOnSuccessListener {
-
-         //  FireBaseDataManagement().getAllReminders("asd@gmail.com")
-
+                 //   FireBaseDataManagement().deleteReminder("-NSf7o6nJ8mcBwrTstRO")
+          // FireBaseDataManagement().getAllReminders("asd@gmail.com")
+//                    FireBaseDataManagement().updateReminder(
+//                         requireContext(),"sample3","sample text3","Mar 11, 2016 6:30:00 PM","","qwe@gmail.com","-NSf7o6nJ8mcBwrTstRO");
                   //  FireBaseDataManagement().uploadReminder(
                      //   requireContext(),"sample1","sample text1","Mar 11, 2016 6:30:00 PM","","asd@gmail.com")
                     view.findNavController().navigate(R.id.action_signInFragment_to_reminderFragment)
