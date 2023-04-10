@@ -1,11 +1,19 @@
 package com.example.remindme.authentication
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
+import android.widget.Toast
+import androidx.navigation.findNavController
 import com.example.remindme.R
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -18,43 +26,72 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class SignUpFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    var email:String = ""
+    var password:String = ""
+    var confirmPassword:String = ""
+    private lateinit var auth: FirebaseAuth
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_sign_up, container, false)
-    }
+        val view = inflater.inflate(R.layout.fragment_sign_up, container, false);
+        val emailTextView = view.findViewById<TextView>(R.id.inputEmailSignUp)
+        val passwordTextView = view.findViewById<TextView>(R.id.inputPasswordSignUp)
+        val confirmPasswordTextView = view.findViewById<TextView>(R.id.inputConfirmPasswordSignUp)
+        auth = Firebase.auth
+        val signUpButton =  view.findViewById<Button>(R.id.signUpScreenSignUpButton)
+        signUpButton.setOnClickListener {
+            email = emailTextView.text.toString()
+            password = passwordTextView.text.toString()
+            confirmPassword = confirmPasswordTextView.text.toString()
+            if(validateFields()) {
+                val signUpTask = auth.createUserWithEmailAndPassword(email, password)
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment SignUpFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            SignUpFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+                signUpTask.addOnSuccessListener {
+                    view.findNavController().navigate(R.id.action_signUpFragment_to_signInFragment)
+                }
+                signUpTask.addOnFailureListener {
+                    Log.w("createUserWithEmail:failure", signUpTask.exception)
+                    Toast.makeText(requireActivity(), "Authentication failed", Toast.LENGTH_SHORT)
+                        .show()
+
                 }
             }
+        }
+        val signInTextview =  view.findViewById<TextView>(R.id.signInInSignUpTextView)
+        signInTextview.setOnClickListener{
+            view.findNavController().navigate(R.id.action_signUpFragment_to_signInFragment)
+        }
+        return view
     }
+    private fun validateFields(): Boolean {
+
+        if(email.isEmpty()){
+            Toast.makeText(this@SignUpFragment.requireActivity(), "Please enter your email id", Toast.LENGTH_SHORT).show()
+            return false
+        }else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+            Toast.makeText(
+                this@SignUpFragment.requireActivity(), "Please enter valid email id", Toast.LENGTH_SHORT).show()
+            return false
+        } else if(password.length<6){
+            Toast.makeText(this@SignUpFragment.requireActivity(), "Password should be minimum six characters", Toast.LENGTH_SHORT).show()
+            return false
+        }else if(confirmPassword.isEmpty()){
+            Toast.makeText(this@SignUpFragment.requireActivity(), "Confirm Password should be minimum six characters", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        else if (password.isNotEmpty() && confirmPassword.isNotEmpty() && password != confirmPassword) {
+            Toast.makeText(this@SignUpFragment.requireActivity(), "Passwords doesn't match", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        return true
+    }
+
+
 }
