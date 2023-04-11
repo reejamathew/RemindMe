@@ -1,13 +1,17 @@
 package com.mdev.apsche
 
+
+import android.graphics.BitmapFactory
 import android.util.Log.*
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.remindme.R
 import com.example.remindme.model.Reminder
+import java.io.File
 
 
 /**
@@ -32,7 +36,16 @@ class MyReminderRecyclerViewAdapter(
         holder.title.text = reminderModel.title
         holder.description.text=reminderModel.description
         holder.date.text=reminderModel.dateTime
-        var  apartId = reminder[position].key!!
+        if(reminderModel.img_location != ""){
+            val imgFile = File(reminderModel.img_location)
+
+            if (imgFile.exists()) {
+                val myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath())
+
+                holder.image.setImageBitmap(myBitmap)
+            }
+        }
+        var  reminderId = reminder[position].key!!
 
         //click action
         holder.itemView.setOnClickListener{
@@ -52,6 +65,7 @@ class MyReminderRecyclerViewAdapter(
         val title: TextView = itemView.findViewById(R.id.titleView)
         val description: TextView = itemView.findViewById(R.id.descriptionView)
         val date: TextView = itemView.findViewById(R.id.dateView)
+        val image: ImageView = itemView.findViewById(R.id.imageView)
 
 
     }
