@@ -24,6 +24,8 @@
         tools:layout="@layout/fragment_sign_up" >
         <action
             android:id="@+id/action_signUpFragment_to_signInFragment"
+            app:popUpTo="@+id/signUpFragment"
+            app:popUpToInclusive="true"
             app:destination="@id/signInFragment" />
     </fragment>
     <fragment
@@ -33,9 +35,13 @@
         tools:layout="@layout/fragment_sign_in" >
         <action
             android:id="@+id/action_signInFragment_to_signUpFragment"
+            app:popUpTo="@+id/signInFragment"
+            app:popUpToInclusive="true"
             app:destination="@id/signUpFragment" />
         <action
             android:id="@+id/action_signInFragment_to_reminderFragment"
+            app:popUpTo="@+id/landingFragment"
+            app:popUpToInclusive="true"
             app:destination="@id/reminderFragment" />
     </fragment>
     <fragment

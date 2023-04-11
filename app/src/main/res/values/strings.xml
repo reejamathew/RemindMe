@@ -11,7 +11,7 @@
     <string name="welcome">Welcome to RemindMe</string>
     <string name="create_account">Create an account</string>
     <string name="already_account">Already have an account?</string>
-    <string name="user_name">User Name</string>
+    <string name="email">Email Id</string>
     <string name="password">Password</string>
     <string name="confirm_password">Confirm Password</string>
 </resources>

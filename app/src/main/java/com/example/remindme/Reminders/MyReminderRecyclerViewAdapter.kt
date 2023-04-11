@@ -1,52 +1,49 @@
-package com.example.remindme.Reminders
+package com.mdev.apsche
 
-import android.util.Log
-import androidx.recyclerview.widget.RecyclerView
+import android.util.Log.*
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.navigation.findNavController
+import androidx.recyclerview.widget.RecyclerView
 import com.example.remindme.R
-
-
-import com.example.remindme.databinding.FragmentReminderBinding
 import com.example.remindme.model.Reminder
+
 
 /**
  * [RecyclerView.Adapter] that can display a [PlaceholderItem].
  * TODO: Replace the implementation with code for your data type.
  */
 class MyReminderRecyclerViewAdapter(
-    private val reminderList: List<Reminder>
+    private val reminder: List<Reminder>
 ) : RecyclerView.Adapter<MyReminderRecyclerViewAdapter.ViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyReminderRecyclerViewAdapter.ViewHolder {
-
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         //inflate view
         val view = LayoutInflater.from(parent.context).inflate(R.layout.fragment_reminder_list, parent, false)
-        return MyReminderRecyclerViewAdapter.ViewHolder(view)
+        return ViewHolder(view)
 
     }
-    override fun onBindViewHolder(holder: MyReminderRecyclerViewAdapter.ViewHolder, position: Int) {
-        //setting view with values
-        val reminderModel = reminderList[position]
+
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        //setting each view value
+        val reminderModel = reminder[position]
         holder.title.text = reminderModel.title
         holder.description.text=reminderModel.description
         holder.date.text=reminderModel.dateTime
-        var  keyReminder = reminderList[position].key!!
-        Log.w("data in adapter",reminderModel.title)
+        var  apartId = reminder[position].key!!
 
-        //list click action
+        //click action
         holder.itemView.setOnClickListener{
-//            val action = NoticeFragmentDirections.actionNoticeFragmentToDetailsFragment(apartId)
+//            val action = HomeFragmentDirections.actionHomeFragmentToDetailsFragment(apartId)
 //            holder.itemView.findNavController().navigate(action)
         }
     }
 
-
     override fun getItemCount(): Int {
-        return reminderList.size
+
+        return reminder.size
     }
 
 
@@ -58,6 +55,4 @@ class MyReminderRecyclerViewAdapter(
 
 
     }
-
-
 }
