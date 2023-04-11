@@ -43,6 +43,8 @@ class FireBaseDataManagement {
         database = Firebase.database.reference.child("reminders");
         val reminders = arrayListOf<Reminder>()
 
+
+
         database.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
                 //   Toast.makeText(applicationContext,"Yolunda gitmeyen şeyler oldu..", Toast.LENGTH_LONG).show()
@@ -56,19 +58,19 @@ class FireBaseDataManagement {
                     Log.w("reminder key",e.key.toString())
                     if (reminder != null) {
                         if(reminder.email == email){
-                            reminders.add(reminder!!)
-                            Log.w("data",reminder.email)
+                            reminders.add(reminder)
+                            Log.w("data",reminders.toString())
                         }
-
+                        Log.w("reminder not null",reminders.toString())
                     }
 
-
+                    Log.w("reminder children",reminders.toString())
 
                 }
-
+                Log.w("reminder in datachange",reminders.toString())
             }
         })
-
+        Log.w("reminder in firebase",reminders.toString())
 
         return reminders
     }

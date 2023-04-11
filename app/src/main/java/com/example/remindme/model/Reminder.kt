@@ -5,5 +5,6 @@ data class Reminder(
     var description: String = "",
     var dateTime: String = "",
     var img_location: String = "",
-    var email: String = ""
+    var email: String = "",
+    var key:String = ""
 ){}

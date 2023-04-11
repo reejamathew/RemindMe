@@ -48,11 +48,13 @@ class SignInFragment : Fragment() {
                 var signInTask = auth.signInWithEmailAndPassword(email, password)
                 signInTask.addOnSuccessListener {
                  //   FireBaseDataManagement().deleteReminder("-NSf7o6nJ8mcBwrTstRO")
-          // FireBaseDataManagement().getAllReminders("asd@gmail.com")
+          val reminderList = FireBaseDataManagement().getAllReminders("asd2@gmail.com")
+
 //                    FireBaseDataManagement().updateReminder(
 //                         requireContext(),"sample3","sample text3","Mar 11, 2016 6:30:00 PM","","qwe@gmail.com","-NSf7o6nJ8mcBwrTstRO");
                   //  FireBaseDataManagement().uploadReminder(
                      //   requireContext(),"sample1","sample text1","Mar 11, 2016 6:30:00 PM","","asd@gmail.com")
+//                    val action = SignInFragmentDirections.actionSignInFragmentToReminderFragment(reminderList)
                     view.findNavController().navigate(R.id.action_signInFragment_to_reminderFragment)
                 }
                 signInTask.addOnFailureListener{
