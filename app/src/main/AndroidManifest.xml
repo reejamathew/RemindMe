@@ -17,15 +17,15 @@
         <activity
             android:name=".ReminderActivity"
             android:exported="false"
-            android:label="@string/title_activity_reminder"
-            android:theme="@style/Theme.RemindMe.NoActionBar">
+            android:label="@string/title_activity_reminder">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.RemindMe.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
