@@ -1,5 +1,6 @@
 package com.example.remindme.authentication
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -12,6 +13,7 @@ import android.widget.Toast
 import androidx.navigation.findNavController
 import com.example.remindme.FireBaseDataManagement
 import com.example.remindme.R
+import com.example.remindme.ReminderActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -53,7 +55,10 @@ class SignInFragment : Fragment() {
 //                         requireContext(),"sample3","sample text3","Mar 11, 2016 6:30:00 PM","","qwe@gmail.com","-NSf7o6nJ8mcBwrTstRO");
                   //  FireBaseDataManagement().uploadReminder(
                      //   requireContext(),"sample1","sample text1","Mar 11, 2016 6:30:00 PM","","asd@gmail.com")
-                    view.findNavController().navigate(R.id.action_signInFragment_to_reminderFragment)
+//                    view.findNavController().navigate(R.id.action_signInFragment_to_reminderFragment)
+
+                    val intent = Intent(context, ReminderActivity::class.java)
+                    startActivity(intent)
                 }
                 signInTask.addOnFailureListener{
                     Log.w("createUserWithEmail:failure", signInTask.exception)
