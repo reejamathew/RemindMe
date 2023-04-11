@@ -99,14 +99,29 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="2"
+                    android:layout_marginTop="24dp">
                     <Button
-                        android:id="@+id/cancelButton"
+                        android:id="@+id/editButton"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_margin="20dp"
                         android:backgroundTint="@color/theme_color"
-                        android:text="@string/cancel"
+                        android:text="@string/edit"
+                        android:textAllCaps="false"
+                        android:textColor="@color/white"
+                        android:layout_weight="1"
+                        />
+
+                    <Button
+                        android:id="@+id/deleteButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="20dp"
+                        android:backgroundTint="@color/error_text_color"
+                        android:text="@string/delete"
                         android:textAllCaps="false"
                         android:textColor="@color/white"
                         android:layout_weight="1"

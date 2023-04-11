@@ -22,13 +22,26 @@
         android:id="@+id/reminderFragment"
         android:name="com.example.remindme.Reminders.ReminderFragment"
         android:label="fragment_reminder_list"
-        tools:layout="@layout/fragment_reminder_list" />
+        tools:layout="@layout/fragment_reminder_list" >
+        <action
+            android:id="@+id/action_reminderFragment_to_reminderDetailFragment"
+            app:destination="@id/reminderDetailFragment" />
+    </fragment>
     <fragment
         android:id="@+id/addItemFragment"
         android:name="com.example.remindme.authentication.AddItemFragment"
-        android:label="AddItemFragment" />
+        android:label="AddItemFragment" >
+        <argument
+            android:name="id"
+            app:argType="integer"
+            android:defaultValue="1" />
+    </fragment>
     <fragment
         android:id="@+id/reminderDetailFragment"
         android:name="com.example.remindme.authentication.ReminderDetailFragment"
-        android:label="ReminderDetailFragment" />
+        android:label="ReminderDetailFragment" >
+        <action
+            android:id="@+id/action_reminderDetailFragment_to_addItemFragment"
+            app:destination="@id/addItemFragment" />
+    </fragment>
 </navigation>
