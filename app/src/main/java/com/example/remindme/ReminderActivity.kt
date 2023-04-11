@@ -9,6 +9,8 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import com.example.remindme.Reminders.ReminderFragment
+import com.example.remindme.authentication.AddItemFragment
 import com.google.android.material.navigation.NavigationView
 
 class ReminderActivity : AppCompatActivity() {
@@ -47,14 +49,31 @@ class ReminderActivity : AppCompatActivity() {
             when (menuItem.itemId) {
                 R.id.home -> {
                     Toast.makeText(this, "Home", Toast.LENGTH_SHORT).show()
+                    val fragment = ReminderFragment()
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.nav_host_fragment, fragment)
+                        .commit()
+
+                    // Close the drawer
+                    drawerLayout.closeDrawer(GravityCompat.START)
                     true
                 }
-                R.id.profile -> {
-                    Toast.makeText(this, "People", Toast.LENGTH_SHORT).show()
+                R.id.add -> {
+                    Toast.makeText(this, "Add", Toast.LENGTH_SHORT).show()
+                    val fragment = AddItemFragment()
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.nav_host_fragment, fragment)
+                        .commit()
+
+                    // Close the drawer
+                    drawerLayout.closeDrawer(GravityCompat.START)
                     true
                 }
                 R.id.logout -> {
                     Toast.makeText(this, "Logout", Toast.LENGTH_SHORT).show()
+
+                    // Close the drawer
+                    drawerLayout.closeDrawer(GravityCompat.START)
                     true
                 }
                 else -> {
