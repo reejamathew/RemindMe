@@ -1,12 +1,11 @@
 package com.example.remindme.Reminders
 
-import android.app.Activity
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import androidx.fragment.app.Fragment
@@ -14,7 +13,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.navigation.findNavController
+import com.example.remindme.MainActivity
 import com.example.remindme.R
 import com.example.remindme.RemindMeConstants
 import com.example.remindme.model.Reminder
@@ -146,11 +148,17 @@ class ReminderActionFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            // Save item to database
+            // Parse date and time inputs
+            val dateTimeFormatter = SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault())
+            val dateTime = dateTimeFormatter.parse("$date $time")
+            val timestamp = dateTime.time
 
+            // Save item to database
             if (reminderId > 0 && reminder != null) {
                 if(database.updateReminder(reminderId.toString(), title, description, imageURI, dateTime.toString(), RemindMeConstants.useremail)){
                     cancel()
+                    // Create notification
+                    createNotification(title, description, timestamp)
                 } else {
                     Toast.makeText(requireContext(), "Error updating reminder!", Toast.LENGTH_SHORT).show()
                 }
@@ -244,6 +252,33 @@ class ReminderActionFragment : Fragment() {
         resetFields()
         val action = ReminderActionFragmentDirections.actionReminderActionFragmentToReminderFragment()
         cancelButton.findNavController().navigate(action)
+    }
+
+    private fun createNotification(title: String, message: String, timestamp: Long) {
+        // Get the NotificationManager
+        val notificationManager = requireActivity().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        // Create an intent that will be triggered when the user taps on the notification
+        val intent = Intent(requireActivity(), MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        val pendingIntent = PendingIntent.getActivity(requireActivity(), 0, intent, 0)
+
+        // Create the notification
+        val builder = NotificationCompat.Builder(requireActivity(), "default")
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setContentTitle(title)
+            .setContentText(message)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+            .setWhen(timestamp)
+
+        // Show the notification
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel("default", "Default", NotificationManager.IMPORTANCE_DEFAULT)
+            notificationManager.createNotificationChannel(channel)
+        }
+        notificationManager.notify(0, builder.build())
     }
 
 
