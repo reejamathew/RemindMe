@@ -105,10 +105,11 @@ class ReminderActionFragment : Fragment() {
             }
 
             // Save item to database
-            Toast.makeText(requireContext(), dateTime.toString(), Toast.LENGTH_SHORT).show()
             if(database.insertReminder(title, description, dateTime.toString(), imageURI, RemindMeConstants.useremail)){
                 Toast.makeText(requireContext(), "Reminder Added Successfully!", Toast.LENGTH_SHORT).show()
                 resetFields()
+            } else {
+                Toast.makeText(requireContext(), "Error adding reminder!", Toast.LENGTH_SHORT).show()
             }
 
         }

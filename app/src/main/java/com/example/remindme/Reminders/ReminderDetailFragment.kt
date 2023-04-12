@@ -95,7 +95,17 @@ class ReminderDetailFragment : Fragment() {
             builder.setMessage("Are you sure you want to delete this item?")
             builder.setPositiveButton("Yes") {_, _ ->
                 // Code to Delete
-                Toast.makeText(view.context, "Home", Toast.LENGTH_SHORT).show()
+                try {
+                    // Code to Delete
+                    val result = database.deleteReminder(reminderId.toString())
+                    if (result) {
+                        Toast.makeText(view.context, "Reminder deleted", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(view.context, "Failed to delete reminder", Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    Toast.makeText(view.context, "Cancelled", Toast.LENGTH_SHORT).show()
+                }
             }
             builder.setNegativeButton("No") { _, _ ->
                 Toast.makeText(view.context, "Home", Toast.LENGTH_SHORT).show()

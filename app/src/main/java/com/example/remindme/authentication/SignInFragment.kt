@@ -39,6 +39,7 @@ class SignInFragment : Fragment() {
         val database = ReminderDatabase(requireActivity())
 
         signInButton.setOnClickListener {
+            view.findNavController().navigate(R.id.action_signInFragment_to_reminderFragment)
 
             email = emailTextView.text.toString()
             password = passwordTextView.text.toString()
