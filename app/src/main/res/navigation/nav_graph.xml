@@ -5,45 +5,7 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/reminderFragment">
 
-    <fragment
-        android:id="@+id/landingFragment"
-        android:name="com.example.remindme.authentication.LandingFragment"
-        android:label="fragment_landing"
-        tools:layout="@layout/fragment_landing" >
-        <action
-            android:id="@+id/action_landingFragment_to_signUpFragment"
-            app:destination="@id/signUpFragment" />
-        <action
-            android:id="@+id/action_landingFragment_to_signInFragment"
-            app:destination="@id/signInFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/signUpFragment"
-        android:name="com.example.remindme.authentication.SignUpFragment"
-        android:label="fragment_sign_up"
-        tools:layout="@layout/fragment_sign_up" >
-        <action
-            android:id="@+id/action_signUpFragment_to_signInFragment"
-            app:popUpTo="@+id/signUpFragment"
-            app:popUpToInclusive="true"
-            app:destination="@id/signInFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/signInFragment"
-        android:name="com.example.remindme.authentication.SignInFragment"
-        android:label="fragment_sign_in"
-        tools:layout="@layout/fragment_sign_in" >
-        <action
-            android:id="@+id/action_signInFragment_to_signUpFragment"
-            app:popUpTo="@+id/signInFragment"
-            app:popUpToInclusive="true"
-            app:destination="@id/signUpFragment" />
-        <action
-            android:id="@+id/action_signInFragment_to_reminderFragment"
-            app:popUpTo="@+id/landingFragment"
-            app:popUpToInclusive="true"
-            app:destination="@id/reminderFragment" />
-    </fragment>
+
     <fragment
         android:id="@+id/reminderFragment"
         android:name="com.example.remindme.Reminders.ReminderFragment"

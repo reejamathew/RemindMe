@@ -50,8 +50,10 @@ class SignInFragment : Fragment() {
                 if(database.checkLogin(email,password)){
                     RemindMeConstants.useremail=email
                     RemindMeConstants.password=password
-                    view.findNavController().navigate(R.id.action_signInFragment_to_reminderFragment)
+//                    view.findNavController().navigate(R.id.action_signInFragment_to_reminderFragment)
 
+                    val intent = Intent(context, ReminderActivity::class.java)
+                    startActivity(intent)
                 }
                 else{
                     //email and password doesn't match with database
