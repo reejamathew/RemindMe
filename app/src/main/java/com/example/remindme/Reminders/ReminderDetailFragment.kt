@@ -28,6 +28,9 @@ class ReminderDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val args = requireArguments()
+        val id = args.getString("id")
+
         // Handle delete button click event
         val deleteButton = view.findViewById<Button>(R.id.deleteButton)
         deleteButton.setOnClickListener{

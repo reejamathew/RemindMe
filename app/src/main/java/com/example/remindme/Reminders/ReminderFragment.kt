@@ -10,8 +10,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.findNavController
 import com.example.remindme.R
 import com.example.remindme.RemindMeConstants
+import com.example.remindme.authentication.ReminderDetailFragmentDirections
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mdev.apsche.MyReminderRecyclerViewAdapter
 import com.mdev.apsche.database.ReminderDatabase
 
@@ -53,6 +56,12 @@ class ReminderFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         Log.w("on created view","created view")
         super.onViewCreated(view, savedInstanceState)
+        val floatingAddBtn = view.findViewById<FloatingActionButton>(R.id.addNew)
+        floatingAddBtn.setOnClickListener{
+            // code to navigate to add item fragment and send data along with it
+            val action = ReminderFragmentDirections.actionReminderFragmentToReminderActionFragment()
+            floatingAddBtn.findNavController().navigate(action)
+        }
     }
 
 }

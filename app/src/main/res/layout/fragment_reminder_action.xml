@@ -24,7 +24,7 @@
 
             <!-- Add an item-->
             <TextView
-                android:id="@+id/addAnItem"
+                android:id="@+id/addReminder"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
@@ -152,6 +152,26 @@
                     android:inputType="none"
                     android:onClick="showTimePickerDialog" />
             </com.google.android.material.textfield.TextInputLayout>
+
+
+            <LinearLayout
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+
+                <EditText
+                    android:id="@+id/cameraField"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Enter a name for the image" />
+                <Button
+                    android:id="@+id/open_camera_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Open Camera" />
+            </LinearLayout>
 
 
             <!--Buttons-->

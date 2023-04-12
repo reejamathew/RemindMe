@@ -1,20 +1,23 @@
 package com.example.remindme.Reminders
 
+import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
+import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
+import android.provider.MediaStore
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.DatePicker
-import android.widget.TextView
-import android.widget.TimePicker
-import android.widget.Toast
+import android.widget.*
+import androidx.navigation.findNavController
 import com.example.remindme.R
+import com.example.remindme.RemindMeConstants
 import com.google.android.material.textfield.TextInputEditText
+import com.mdev.apsche.database.ReminderDatabase
 import java.util.*
 
 class ReminderActionFragment : Fragment() {
@@ -23,19 +26,44 @@ class ReminderActionFragment : Fragment() {
     private lateinit var dateInput: TextInputEditText
     private lateinit var timeInput: TextInputEditText
     private lateinit var addItemButton: Button
+    private lateinit var cancelButton: Button
+
 
     var myContext: Context? = null
+    // Request code for opening the camera intent
+    private val REQUEST_IMAGE_CAPTURE = 1
+
+    // UI elements
+    private lateinit var inputField: EditText
+    private lateinit var openCameraButton: Button
+    private lateinit var imageURI: String
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_reminder_action, container, false)
+        val view =  inflater.inflate(R.layout.fragment_reminder_action, container, false)
+
+        // Get references to the UI elements
+        inputField = view.findViewById(R.id.cameraField)
+        openCameraButton = view.findViewById(R.id.open_camera_button)
+
+        // Set a click listener for the "Open Camera" button
+        openCameraButton.setOnClickListener {
+            // When the button is clicked, open the camera
+            dispatchTakePictureIntent()
+        }
+
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Initialize database
+        val database = ReminderDatabase(requireActivity())
 
         // Initialize views
         titleInput = view.findViewById(R.id.titleInput)
@@ -43,6 +71,7 @@ class ReminderActionFragment : Fragment() {
         dateInput = view.findViewById(R.id.dateEditText)
         timeInput = view.findViewById(R.id.timeEditText)
         addItemButton = view.findViewById(R.id.submitButton)
+        cancelButton = view.findViewById(R.id.cancelButton)
 
         // Set up date picker
         dateInput.setOnClickListener {
@@ -52,6 +81,13 @@ class ReminderActionFragment : Fragment() {
         // Set up time picker
         timeInput.setOnClickListener {
             showTimePickerDialog()
+        }
+
+        // Set up cancel click listener
+        cancelButton.setOnClickListener {
+            resetFields()
+            val action = ReminderActionFragmentDirections.actionReminderActionFragmentToReminderFragment()
+            cancelButton.findNavController().navigate(action)
         }
 
         // Set up button click listener
@@ -69,16 +105,21 @@ class ReminderActionFragment : Fragment() {
             }
 
             // TODO: Save item to database or perform other actions
+            if(database.insertReminder(title, description, date, imageURI, RemindMeConstants.useremail)){
+                Toast.makeText(requireContext(), "Reminder Added Successfully!", Toast.LENGTH_SHORT).show()
+                resetFields()
+            }
 
-            // Show success message
-            Toast.makeText(requireContext(), "Item added successfully", Toast.LENGTH_SHORT).show()
-
-            // Clear input fields
-            titleInput.text = null
-            descriptionInput.text = null
-            dateInput.text = null
-            timeInput.text = null
         }
+    }
+
+    // Reset all input fields
+    private fun resetFields() {
+        titleInput.text = null
+        descriptionInput.text = null
+        dateInput.text = null
+        timeInput.text = null
+        imageURI = ""
     }
 
     private fun showDatePickerDialog() {
@@ -107,4 +148,34 @@ class ReminderActionFragment : Fragment() {
 
         timePickerDialog.show()
     }
+
+    // Function to open the camera
+    private fun dispatchTakePictureIntent() {
+        // Create a new intent to open the camera app
+        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+            // Make sure there's a camera app to handle the intent
+            takePictureIntent.resolveActivity(requireActivity().packageManager)?.also {
+                // Start the camera activity and wait for a result
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+            }
+        }
+    }
+    // Handle the camera intent result
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        // Check if the result is from the camera intent and is successful
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
+            // Get the captured image URI
+            val imageUri = data?.data
+            // Get the image name from the input field
+            val imageName = inputField.text.toString()
+
+            // Save the image URI to the database
+            imageURI = imageUri.toString()
+//            saveImageToDatabase(imageName, imageUri.toString())
+        }
+    }
+
+
 }

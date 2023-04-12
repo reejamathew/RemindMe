@@ -60,6 +60,10 @@
         android:id="@+id/reminderDetailFragment"
         android:name="com.example.remindme.authentication.ReminderDetailFragment"
         android:label="ReminderDetailFragment" >
+        <argument
+            android:name="id"
+            app:argType="integer"
+            android:defaultValue="1" />
         <action
             android:id="@+id/action_reminderDetailFragment_to_reminderActionFragment"
             app:destination="@id/reminderActionFragment" />
@@ -73,5 +77,8 @@
             android:name="id"
             app:argType="integer"
             android:defaultValue="1" />
+        <action
+            android:id="@+id/action_reminderActionFragment_to_reminderFragment"
+            app:destination="@id/reminderFragment" />
     </fragment>
 </navigation>
