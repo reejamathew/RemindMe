@@ -14,4 +14,16 @@
     <string name="email">Email Id</string>
     <string name="password">Password</string>
     <string name="confirm_password">Confirm Password</string>
+    <string name="add_reminder">Add Reminder</string>
+    <string name="edit_reminder">Edit Reminder</string>
+
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="submit">Submit</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="reminder_detail">Reminder Detail</string>
 </resources>
