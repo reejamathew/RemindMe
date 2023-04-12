@@ -159,13 +159,10 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
                 >
 
-                <EditText
-                    android:id="@+id/cameraField"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Enter a name for the image" />
                 <Button
                     android:id="@+id/open_camera_button"
                     android:layout_width="match_parent"

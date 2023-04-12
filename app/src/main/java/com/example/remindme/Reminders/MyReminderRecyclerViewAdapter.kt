@@ -8,8 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.remindme.R
+import com.example.remindme.Reminders.ReminderFragmentDirections
 import com.example.remindme.model.Reminder
 import java.io.File
 
@@ -49,8 +51,8 @@ class MyReminderRecyclerViewAdapter(
 
         //click action
         holder.itemView.setOnClickListener{
-//            val action = HomeFragmentDirections.actionHomeFragmentToDetailsFragment(apartId)
-//            holder.itemView.findNavController().navigate(action)
+            val action = ReminderFragmentDirections.actionReminderFragmentToReminderDetailFragment(reminderId.toInt())
+            holder.itemView.findNavController().navigate(action)
         }
     }
 

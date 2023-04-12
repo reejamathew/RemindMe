@@ -36,7 +36,7 @@ class ReminderActionFragment : Fragment() {
     // UI elements
     private lateinit var inputField: EditText
     private lateinit var openCameraButton: Button
-    private lateinit var imageURI: String
+    private var imageURI: String = ""
 
 
     override fun onCreateView(
@@ -47,7 +47,6 @@ class ReminderActionFragment : Fragment() {
         val view =  inflater.inflate(R.layout.fragment_reminder_action, container, false)
 
         // Get references to the UI elements
-        inputField = view.findViewById(R.id.cameraField)
         openCameraButton = view.findViewById(R.id.open_camera_button)
 
         // Set a click listener for the "Open Camera" button
