@@ -37,6 +37,7 @@ class ReminderActionFragment : Fragment() {
     private lateinit var inputField: EditText
     private lateinit var openCameraButton: Button
     private var imageURI: String = ""
+    private lateinit var dateTime: Date
 
 
     override fun onCreateView(
@@ -103,8 +104,9 @@ class ReminderActionFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            // TODO: Save item to database or perform other actions
-            if(database.insertReminder(title, description, date, imageURI, RemindMeConstants.useremail)){
+            // Save item to database
+            Toast.makeText(requireContext(), dateTime.toString(), Toast.LENGTH_SHORT).show()
+            if(database.insertReminder(title, description, dateTime.toString(), imageURI, RemindMeConstants.useremail)){
                 Toast.makeText(requireContext(), "Reminder Added Successfully!", Toast.LENGTH_SHORT).show()
                 resetFields()
             }
@@ -128,6 +130,14 @@ class ReminderActionFragment : Fragment() {
         val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
 
         val datePickerDialog = DatePickerDialog(requireContext(), { _, y, m, d ->
+
+            calendar.set(Calendar.YEAR, y)
+            calendar.set(Calendar.MONTH, m)
+            calendar.set(Calendar.DAY_OF_MONTH, d)
+            // Save the date and time in the same variable
+            dateTime = calendar.time
+
+            // Update UI
             val date = "${d}/${m + 1}/${y}"
             dateInput.setText(date)
         }, year, month, dayOfMonth)
@@ -141,6 +151,13 @@ class ReminderActionFragment : Fragment() {
         val minute = calendar.get(Calendar.MINUTE)
 
         val timePickerDialog = TimePickerDialog(requireContext(), { _, h, m ->
+            // Save the date and time in the same variable
+            calendar.set(Calendar.HOUR_OF_DAY, h)
+            calendar.set(Calendar.MINUTE, m)
+
+            dateTime = calendar.time
+
+            // Update UI
             val time = "${h}:${m}"
             timeInput.setText(time)
         }, hour, minute, true)
@@ -172,7 +189,6 @@ class ReminderActionFragment : Fragment() {
 
             // Save the image URI to the database
             imageURI = imageUri.toString()
-//            saveImageToDatabase(imageName, imageUri.toString())
         }
     }
 

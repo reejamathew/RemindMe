@@ -16,14 +16,16 @@ import com.example.remindme.R
 import com.example.remindme.model.Reminder
 import com.mdev.apsche.database.ReminderDatabase
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
 
 class ReminderDetailFragment : Fragment() {
 
     private var reminderId: Int = 0
     private lateinit var title: TextView
     private lateinit var description: TextView
-    private lateinit var date: TextView
-    private lateinit var time: TextView
+    private lateinit var dateView: TextView
+    private lateinit var timeView: TextView
     private lateinit var imageView: ImageView
 
     private lateinit var reminder: Reminder
@@ -46,8 +48,8 @@ class ReminderDetailFragment : Fragment() {
 
         // Initialize views
         title = view.findViewById(R.id.reminderTitle)
-        date = view.findViewById(R.id.reminderDate)
-        time = view.findViewById(R.id.reminderTime)
+        dateView = view.findViewById(R.id.reminderDate)
+        timeView = view.findViewById(R.id.reminderTime)
         description = view.findViewById(R.id.reminderDescription)
         imageView = view.findViewById(R.id.imageView)
 
@@ -62,8 +64,18 @@ class ReminderDetailFragment : Fragment() {
                 reminder = database.getRemindersById(reminderId.toString())[0]
                 title.text = reminder.title
                 description.text = reminder.description
-                date.text = reminder.dateTime
-                time.text = reminder.dateTime
+
+
+                val dateFormatter = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US)
+                val date = dateFormatter.parse(reminder.dateTime)
+                val formattedDate = SimpleDateFormat("dd/MM/yyyy", Locale.US).format(date)
+                dateView.text = formattedDate // Update the UI with the formatted date
+
+
+                val timeFormatter = SimpleDateFormat("hh:mm a", Locale.US) // Specify the desired format
+                val time = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US).parse(reminder.dateTime)
+                val formattedTime = timeFormatter.format(time)
+                timeView.text = formattedTime // Update the UI with the formatted date
                 if(reminder.img_location != ""){
                     val imgFile = File(reminder.img_location)
 
