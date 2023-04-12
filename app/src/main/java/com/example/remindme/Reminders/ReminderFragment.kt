@@ -1,5 +1,6 @@
 package com.example.remindme.Reminders
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -19,11 +20,12 @@ import com.mdev.apsche.database.ReminderDatabase
  */
 class ReminderFragment : Fragment() {
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_reminder_list, container, false)
+        val view = inflater.inflate(R.layout.fragment_reminder, container, false)
 
         RemindMeConstants.showMenu = true
         val activity = activity as AppCompatActivity?
