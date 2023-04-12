@@ -14,6 +14,7 @@ import com.example.remindme.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.mdev.apsche.database.ReminderDatabase
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -30,7 +31,7 @@ class SignUpFragment : Fragment() {
     var email:String = ""
     var password:String = ""
     var confirmPassword:String = ""
-    private lateinit var auth: FirebaseAuth
+
 
 
 
@@ -43,24 +44,25 @@ class SignUpFragment : Fragment() {
         val emailTextView = view.findViewById<TextView>(R.id.inputEmailSignUp)
         val passwordTextView = view.findViewById<TextView>(R.id.inputPasswordSignUp)
         val confirmPasswordTextView = view.findViewById<TextView>(R.id.inputConfirmPasswordSignUp)
-        auth = Firebase.auth
+        //intialize database
+        val database = ReminderDatabase(requireActivity())
         val signUpButton =  view.findViewById<Button>(R.id.signUpScreenSignUpButton)
+
         signUpButton.setOnClickListener {
             email = emailTextView.text.toString()
             password = passwordTextView.text.toString()
             confirmPassword = confirmPasswordTextView.text.toString()
             if(validateFields()) {
-                val signUpTask = auth.createUserWithEmailAndPassword(email, password)
 
-                signUpTask.addOnSuccessListener {
+                if (!database.checkEmail(email)) {
+                    database.insertUser(email,password)
+                    Log.d("reached here", "signup")
                     view.findNavController().navigate(R.id.action_signUpFragment_to_signInFragment)
-                }
-                signUpTask.addOnFailureListener {
-                    Log.w("createUserWithEmail:failure", signUpTask.exception)
-                    Toast.makeText(requireActivity(), "Authentication failed", Toast.LENGTH_SHORT)
+                } else {
+                    Toast.makeText(requireActivity(), "Emailid already exists", Toast.LENGTH_SHORT)
                         .show()
-
                 }
+
             }
         }
         val signInTextview =  view.findViewById<TextView>(R.id.signInInSignUpTextView)
