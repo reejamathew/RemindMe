@@ -21,10 +21,67 @@
         android:id="@+id/signUpFragment"
         android:name="com.example.remindme.authentication.SignUpFragment"
         android:label="fragment_sign_up"
-        tools:layout="@layout/fragment_sign_up" />
+        tools:layout="@layout/fragment_sign_up" >
+        <action
+            android:id="@+id/action_signUpFragment_to_signInFragment"
+            app:popUpTo="@+id/signUpFragment"
+            app:popUpToInclusive="true"
+            app:destination="@id/signInFragment" />
+    </fragment>
     <fragment
         android:id="@+id/signInFragment"
         android:name="com.example.remindme.authentication.SignInFragment"
         android:label="fragment_sign_in"
-        tools:layout="@layout/fragment_sign_in" />
+        tools:layout="@layout/fragment_sign_in" >
+        <action
+            android:id="@+id/action_signInFragment_to_signUpFragment"
+            app:popUpTo="@+id/signInFragment"
+            app:popUpToInclusive="true"
+            app:destination="@id/signUpFragment" />
+        <action
+            android:id="@+id/action_signInFragment_to_reminderFragment"
+            app:popUpTo="@+id/landingFragment"
+            app:popUpToInclusive="true"
+            app:destination="@id/reminderFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/reminderFragment"
+        android:name="com.example.remindme.Reminders.ReminderFragment"
+        android:label="fragment_reminder_list"
+        tools:layout="@layout/fragment_reminder_list" >
+        <action
+            android:id="@+id/action_reminderFragment_to_reminderDetailFragment"
+            app:destination="@id/reminderDetailFragment" />
+        <action
+            android:id="@+id/action_reminderFragment_to_reminderActionFragment"
+            app:destination="@id/reminderActionFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/reminderDetailFragment"
+        android:name="com.example.remindme.authentication.ReminderDetailFragment"
+        android:label="ReminderDetailFragment" >
+        <argument
+            android:name="id"
+            app:argType="integer"
+            android:defaultValue="1" />
+        <action
+            android:id="@+id/action_reminderDetailFragment_to_reminderActionFragment"
+            app:destination="@id/reminderActionFragment" />
+        <action
+            android:id="@+id/action_reminderDetailFragment_to_reminderFragment"
+            app:destination="@id/reminderFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/reminderActionFragment"
+        android:name="com.example.remindme.Reminders.ReminderActionFragment"
+        android:label="fragment_reminder_action"
+        tools:layout="@layout/fragment_reminder_action">
+        <argument
+            android:name="id"
+            app:argType="integer"
+            android:defaultValue="1" />
+        <action
+            android:id="@+id/action_reminderActionFragment_to_reminderFragment"
+            app:destination="@id/reminderFragment" />
+    </fragment>
 </navigation>

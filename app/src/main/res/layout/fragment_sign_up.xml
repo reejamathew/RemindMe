@@ -49,16 +49,16 @@
                     android:text="@string/create_account" />
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/layoutNameSignUp"
+                    android:id="@+id/layoutEmailSignUp"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
-                    android:hint="@string/user_name"
-                    app:startIconDrawable="@drawable/ic_action_name">
+                    android:hint="@string/email"
+                    app:startIconDrawable="@drawable/ic_action_email">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/inputNameSignUp"
+                        android:id="@+id/inputEmailSignUp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="text"

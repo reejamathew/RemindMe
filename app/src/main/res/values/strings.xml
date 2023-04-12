@@ -11,7 +11,19 @@
     <string name="welcome">Welcome to RemindMe</string>
     <string name="create_account">Create an account</string>
     <string name="already_account">Already have an account?</string>
-    <string name="user_name">User Name</string>
+    <string name="email">Email Id</string>
     <string name="password">Password</string>
     <string name="confirm_password">Confirm Password</string>
+    <string name="add_reminder">Add Reminder</string>
+    <string name="edit_reminder">Edit Reminder</string>
+
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="submit">Submit</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="reminder_detail">Reminder Detail</string>
 </resources>

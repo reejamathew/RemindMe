@@ -49,16 +49,16 @@
                     android:text="@string/login_text" />
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/layoutUserNameSignIn"
+                    android:id="@+id/layoutEmailSignIn"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
-                    android:hint="@string/user_name"
-                    app:startIconDrawable="@drawable/ic_action_name">
+                    android:hint="@string/email"
+                    app:startIconDrawable="@drawable/ic_action_email">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/inputUserNameSignIn"
+                        android:id="@+id/inputEmailSignIn"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="" />
