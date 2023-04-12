@@ -13,6 +13,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.navigation.findNavController
 import com.example.remindme.R
+import com.example.remindme.Reminders.ReminderActionFragmentDirections
 import com.example.remindme.model.Reminder
 import com.mdev.apsche.database.ReminderDatabase
 import java.io.File
@@ -66,12 +67,13 @@ class ReminderDetailFragment : Fragment() {
                 description.text = reminder.description
 
 
+                // Format date and display it in the respective date text view
                 val dateFormatter = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US)
                 val date = dateFormatter.parse(reminder.dateTime)
                 val formattedDate = SimpleDateFormat("dd/MM/yyyy", Locale.US).format(date)
                 dateView.text = formattedDate // Update the UI with the formatted date
 
-
+                // Format time and display it in the respective time text view
                 val timeFormatter = SimpleDateFormat("hh:mm a", Locale.US) // Specify the desired format
                 val time = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US).parse(reminder.dateTime)
                 val formattedTime = timeFormatter.format(time)
@@ -100,6 +102,8 @@ class ReminderDetailFragment : Fragment() {
                     val result = database.deleteReminder(reminderId.toString())
                     if (result) {
                         Toast.makeText(view.context, "Reminder deleted", Toast.LENGTH_SHORT).show()
+                        val action = ReminderDetailFragmentDirections.actionReminderDetailFragmentToReminderFragment()
+                        deleteButton.findNavController().navigate(action)
                     } else {
                         Toast.makeText(view.context, "Failed to delete reminder", Toast.LENGTH_SHORT).show()
                     }

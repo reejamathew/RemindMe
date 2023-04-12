@@ -6,6 +6,7 @@ import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.provider.MediaStore
 import androidx.fragment.app.Fragment
@@ -16,8 +17,13 @@ import android.widget.*
 import androidx.navigation.findNavController
 import com.example.remindme.R
 import com.example.remindme.RemindMeConstants
+import com.example.remindme.model.Reminder
 import com.google.android.material.textfield.TextInputEditText
 import com.mdev.apsche.database.ReminderDatabase
+import java.io.File
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 class ReminderActionFragment : Fragment() {
@@ -38,6 +44,9 @@ class ReminderActionFragment : Fragment() {
     private lateinit var openCameraButton: Button
     private var imageURI: String = ""
     private lateinit var dateTime: Date
+
+    private lateinit var reminder: Reminder
+
 
 
     override fun onCreateView(
@@ -62,9 +71,6 @@ class ReminderActionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Initialize database
-        val database = ReminderDatabase(requireActivity())
-
         // Initialize views
         titleInput = view.findViewById(R.id.titleInput)
         descriptionInput = view.findViewById(R.id.descriptionInput)
@@ -72,6 +78,51 @@ class ReminderActionFragment : Fragment() {
         timeInput = view.findViewById(R.id.timeEditText)
         addItemButton = view.findViewById(R.id.submitButton)
         cancelButton = view.findViewById(R.id.cancelButton)
+
+        // Initialize database
+        val database = ReminderDatabase(requireActivity())
+
+        // Get argument sent from another fragment
+        val args = requireArguments()
+        val reminderId = args?.getInt("id") ?: 0
+
+        if (reminderId != 0) {
+            if(database.getRemindersById(reminderId.toString()).size > 0) {
+                reminder = database.getRemindersById(reminderId.toString())[0]
+                titleInput.setText(reminder.title)
+                descriptionInput.setText(reminder.description)
+
+
+                val dateFormatter = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US)
+                val date = dateFormatter.parse(reminder.dateTime)
+                val formattedDate = SimpleDateFormat("dd/MM/yyyy", Locale.US).format(date)
+                dateInput.setText(formattedDate) // Update the UI with the formatted date
+
+                // set dateTime to global dateTime variable
+                val inputFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.getDefault())
+                dateTime = inputFormat.parse(reminder.dateTime)
+
+                // set image location to global image location
+                imageURI = reminder.img_location
+
+
+                val timeFormatter = SimpleDateFormat("hh:mm a", Locale.US) // Specify the desired format
+                val time = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US).parse(reminder.dateTime)
+                val formattedTime = timeFormatter.format(time)
+                timeInput.setText(formattedTime) // Update the UI with the formatted date
+//                if(reminder.img_location != ""){
+//                    val imgFile = File(reminder.img_location)
+//
+//                    if (imgFile.exists()) {
+//                        val myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath())
+//
+//                        imageView.setImageBitmap(myBitmap)
+//                    }
+//                }
+            }
+        }
+
+
 
         // Set up date picker
         dateInput.setOnClickListener {
@@ -85,9 +136,7 @@ class ReminderActionFragment : Fragment() {
 
         // Set up cancel click listener
         cancelButton.setOnClickListener {
-            resetFields()
-            val action = ReminderActionFragmentDirections.actionReminderActionFragmentToReminderFragment()
-            cancelButton.findNavController().navigate(action)
+            cancel()
         }
 
         // Set up button click listener
@@ -105,13 +154,20 @@ class ReminderActionFragment : Fragment() {
             }
 
             // Save item to database
-            if(database.insertReminder(title, description, dateTime.toString(), imageURI, RemindMeConstants.useremail)){
-                Toast.makeText(requireContext(), "Reminder Added Successfully!", Toast.LENGTH_SHORT).show()
-                resetFields()
-            } else {
-                Toast.makeText(requireContext(), "Error adding reminder!", Toast.LENGTH_SHORT).show()
-            }
 
+            if (reminderId > 0 && reminder != null) {
+                if(database.updateReminder(reminderId.toString(), title, description, imageURI, dateTime.toString(), RemindMeConstants.useremail)){
+                    cancel()
+                } else {
+                    Toast.makeText(requireContext(), "Error updating reminder!", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                if(database.insertReminder(title, description, dateTime.toString(), imageURI, RemindMeConstants.useremail)){
+                    cancel()
+                } else {
+                    Toast.makeText(requireContext(), "Error adding reminder!", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 
@@ -191,6 +247,12 @@ class ReminderActionFragment : Fragment() {
             // Save the image URI to the database
             imageURI = imageUri.toString()
         }
+    }
+
+    private fun cancel() {
+        resetFields()
+        val action = ReminderActionFragmentDirections.actionReminderActionFragmentToReminderFragment()
+        cancelButton.findNavController().navigate(action)
     }
 
 

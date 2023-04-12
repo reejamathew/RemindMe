@@ -108,7 +108,7 @@ class ReminderDatabase (context: Context?) : SQLiteOpenHelper(context, DATABASE_
     }
    
 
-    fun updateReminder(reminderId: String?, apt_no: String?, title: String?, description: String?, image: String?, date: String?, beds: String?, email:String?): Boolean {
+    fun updateReminder(reminderId: String?,  title: String?, description: String?, image: String?, date: String?, email:String?): Boolean {
         val sqLiteDatabase = this.writableDatabase
         val contentValues = ContentValues()
         contentValues.put(COL_REMINDER_ID, reminderId)
@@ -129,12 +129,15 @@ class ReminderDatabase (context: Context?) : SQLiteOpenHelper(context, DATABASE_
     fun deleteReminder(reminderId: String): Boolean {
         val sqLiteDatabase = this.writableDatabase
 
-        val result =
-            sqLiteDatabase.rawQuery("DELETE  FROM $REMINDER_TABLE WHERE $COL_REMINDER_ID=?", arrayOf(reminderId))
-        //sqLiteDatabase.close()
-        return !result.count.equals(0)
+        val result = sqLiteDatabase.delete(
+            REMINDER_TABLE,
+            "$COL_REMINDER_ID = ?",
+            arrayOf(reminderId)
+        )
 
+        sqLiteDatabase.close()
 
+        return result != -1
     }
     fun insertUser(email:String?,  password: String?): Boolean {
 

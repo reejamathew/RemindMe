@@ -59,7 +59,7 @@ class ReminderFragment : Fragment() {
         val floatingAddBtn = view.findViewById<FloatingActionButton>(R.id.addNew)
         floatingAddBtn.setOnClickListener{
             // code to navigate to add item fragment and send data along with it
-            val action = ReminderFragmentDirections.actionReminderFragmentToReminderActionFragment()
+            val action = ReminderFragmentDirections.actionReminderFragmentToReminderActionFragment(0)
             floatingAddBtn.findNavController().navigate(action)
         }
     }
