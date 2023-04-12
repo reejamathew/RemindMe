@@ -47,6 +47,8 @@ class ReminderActionFragment : Fragment() {
 
     private lateinit var reminder: Reminder
 
+    private val calendar = Calendar.getInstance()
+
 
 
     override fun onCreateView(
@@ -110,15 +112,6 @@ class ReminderActionFragment : Fragment() {
                 val time = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US).parse(reminder.dateTime)
                 val formattedTime = timeFormatter.format(time)
                 timeInput.setText(formattedTime) // Update the UI with the formatted date
-//                if(reminder.img_location != ""){
-//                    val imgFile = File(reminder.img_location)
-//
-//                    if (imgFile.exists()) {
-//                        val myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath())
-//
-//                        imageView.setImageBitmap(myBitmap)
-//                    }
-//                }
             }
         }
 
@@ -181,7 +174,6 @@ class ReminderActionFragment : Fragment() {
     }
 
     private fun showDatePickerDialog() {
-        val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH)
         val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
@@ -203,7 +195,6 @@ class ReminderActionFragment : Fragment() {
     }
 
     private fun showTimePickerDialog() {
-        val calendar = Calendar.getInstance()
         val hour = calendar.get(Calendar.HOUR_OF_DAY)
         val minute = calendar.get(Calendar.MINUTE)
 
