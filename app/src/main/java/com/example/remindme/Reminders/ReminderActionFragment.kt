@@ -3,6 +3,7 @@ package com.example.remindme.Reminders
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
@@ -149,7 +150,7 @@ class ReminderActionFragment : Fragment() {
             }
 
             // Parse date and time inputs
-            val dateTimeFormatter = SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault())
+            val dateTimeFormatter = SimpleDateFormat("dd/MM/yyyy hh:mm", Locale.getDefault())
             val dateTime = dateTimeFormatter.parse("$date $time")
             val timestamp = dateTime.time
 
@@ -158,7 +159,7 @@ class ReminderActionFragment : Fragment() {
                 if(database.updateReminder(reminderId.toString(), title, description, imageURI, dateTime.toString(), RemindMeConstants.useremail)){
                     cancel()
                     // Create notification
-                    createNotification(title, description, timestamp)
+//                    createNotification(title, description, timestamp)
                 } else {
                     Toast.makeText(requireContext(), "Error updating reminder!", Toast.LENGTH_SHORT).show()
                 }
@@ -223,15 +224,25 @@ class ReminderActionFragment : Fragment() {
 
     // Function to open the camera
     private fun dispatchTakePictureIntent() {
+        // Check if the device has a camera
+        val hasCamera = requireContext().packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)
+        if (!hasCamera) {
+            // Handle the case where the device doesn't have a camera
+            return
+        }
+
         // Create a new intent to open the camera app
-        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
-            // Make sure there's a camera app to handle the intent
-            takePictureIntent.resolveActivity(requireActivity().packageManager)?.also {
-                // Start the camera activity and wait for a result
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
-            }
+        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        // Make sure there's a camera app to handle the intent
+        if (cameraIntent.resolveActivity(requireActivity().packageManager) != null) {
+            // Start the camera activity and wait for a result
+            startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE)
+        } else {
+            // Handle the case where there's no app to handle the intent
+            Toast.makeText(requireContext(), "Error Opening the camera!", Toast.LENGTH_SHORT).show()
         }
     }
+
     // Handle the camera intent result
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -241,12 +252,17 @@ class ReminderActionFragment : Fragment() {
             // Get the captured image URI
             val imageUri = data?.data
             // Get the image name from the input field
-            val imageName = inputField.text.toString()
-
-            // Save the image URI to the database
-            imageURI = imageUri.toString()
+            val imageName = inputField?.text?.toString()
+            if (imageUri != null && imageName != null) {
+                // Save the image URI to the database
+                val imageURI = imageUri.toString()
+                // Do something with the image URI
+            } else {
+                // Handle the case where imageUri or imageName is null
+            }
         }
     }
+
 
     private fun cancel() {
         resetFields()
