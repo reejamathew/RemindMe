@@ -161,13 +161,47 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
+                android:layout_marginBottom="16dp"
                 >
 
+<!--                <Button-->
+<!--                    android:id="@+id/open_camera_button"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="Open Camera" />-->
+
                 <Button
-                    android:id="@+id/open_camera_button"
-                    android:layout_width="match_parent"
+                    android:id="@+id/pickImageButton"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Open Camera" />
+                    android:text="Pick Image" />
+
+            </LinearLayout>
+
+
+
+            <LinearLayout
+                android:id="@+id/imageContainer"
+                android:visibility="invisible"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:text="Image Preview" />
+
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="250dp"
+                    android:layout_height="200dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:src="@drawable/ic_launcher_background" />
+
             </LinearLayout>
 
 

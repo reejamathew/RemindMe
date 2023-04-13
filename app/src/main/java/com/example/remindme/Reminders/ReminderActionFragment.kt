@@ -1,11 +1,11 @@
 package com.example.remindme.Reminders
 
 import android.app.*
+
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
@@ -14,10 +14,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.content.ContextCompat
+
 import androidx.navigation.findNavController
 import com.example.remindme.MainActivity
+
+
 import com.example.remindme.R
 import com.example.remindme.RemindMeConstants
 import com.example.remindme.model.Reminder
@@ -36,11 +40,17 @@ class ReminderActionFragment : Fragment() {
     private lateinit var timeInput: TextInputEditText
     private lateinit var addItemButton: Button
     private lateinit var cancelButton: Button
+    private lateinit var pickImageButton: Button
+    private lateinit var imageView: ImageView
+    private lateinit var imageContainer: LinearLayout
 
 
     var myContext: Context? = null
     // Request code for opening the camera intent
     private val REQUEST_IMAGE_CAPTURE = 1
+
+    // Define the request code
+    private val PICK_IMAGE_REQUEST = 1
 
     // UI elements
     private lateinit var inputField: EditText
@@ -60,16 +70,6 @@ class ReminderActionFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view =  inflater.inflate(R.layout.fragment_reminder_action, container, false)
-
-        // Get references to the UI elements
-        openCameraButton = view.findViewById(R.id.open_camera_button)
-
-        // Set a click listener for the "Open Camera" button
-        openCameraButton.setOnClickListener {
-            // When the button is clicked, open the camera
-            dispatchTakePictureIntent()
-        }
-
         return view
     }
 
@@ -83,6 +83,9 @@ class ReminderActionFragment : Fragment() {
         timeInput = view.findViewById(R.id.timeEditText)
         addItemButton = view.findViewById(R.id.submitButton)
         cancelButton = view.findViewById(R.id.cancelButton)
+        pickImageButton = view.findViewById(R.id.pickImageButton)
+        imageView = view.findViewById(R.id.imageView)
+        imageContainer = view.findViewById(R.id.imageContainer)
 
         // Initialize database
         val database = ReminderDatabase(requireActivity())
@@ -108,7 +111,22 @@ class ReminderActionFragment : Fragment() {
                 dateTime = inputFormat.parse(reminder.dateTime)
 
                 // set image location to global image location
-                imageURI = reminder.img_location
+                if (reminder?.img_location != null) {
+                    val imageUri = Uri.parse(reminder.img_location)
+                    imageView.setImageURI(imageUri)
+                    imageContainer.visibility = View.VISIBLE
+
+
+//                    val permission = Manifest.permission.READ_EXTERNAL_STORAGE
+//                    if (ContextCompat.checkSelfPermission(requireContext(), permission) != PackageManager.PERMISSION_GRANTED) {
+//                        ActivityCompat.requestPermissions(requireActivity(), arrayOf(permission), 123)
+//                    } else {
+//                        // Permission is already granted
+//                        val imageUri = Uri.parse(reminder.img_location)
+//                        imageView.setImageURI(imageUri)
+//                        imageContainer.visibility = View.VISIBLE
+//                    }
+                }
 
 
                 val timeFormatter = SimpleDateFormat("hh:mm a", Locale.US) // Specify the desired format
@@ -128,6 +146,11 @@ class ReminderActionFragment : Fragment() {
         // Set up time picker
         timeInput.setOnClickListener {
             showTimePickerDialog()
+        }
+
+        // Setup image picker
+        pickImageButton.setOnClickListener {
+            launchImagePicker()
         }
 
         // Set up cancel click listener
@@ -180,6 +203,8 @@ class ReminderActionFragment : Fragment() {
         dateInput.text = null
         timeInput.text = null
         imageURI = ""
+        imageView.setImageURI(null)
+        imageContainer.visibility = View.INVISIBLE
     }
 
     private fun showDatePickerDialog() {
@@ -222,46 +247,43 @@ class ReminderActionFragment : Fragment() {
         timePickerDialog.show()
     }
 
-    // Function to open the camera
-    private fun dispatchTakePictureIntent() {
-        // Check if the device has a camera
-        val hasCamera = requireContext().packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)
-        if (!hasCamera) {
-            // Handle the case where the device doesn't have a camera
-            return
-        }
-
-        // Create a new intent to open the camera app
-        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        // Make sure there's a camera app to handle the intent
-        if (cameraIntent.resolveActivity(requireActivity().packageManager) != null) {
-            // Start the camera activity and wait for a result
-            startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE)
-        } else {
-            // Handle the case where there's no app to handle the intent
-            Toast.makeText(requireContext(), "Error Opening the camera!", Toast.LENGTH_SHORT).show()
-        }
+    // Create a function to launch the image picker
+    private fun launchImagePicker() {
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        startActivityForResult(intent, PICK_IMAGE_REQUEST)
     }
 
-    // Handle the camera intent result
+    // Override the onActivityResult function to get the result
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
-        // Check if the result is from the camera intent and is successful
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
-            // Get the captured image URI
-            val imageUri = data?.data
-            // Get the image name from the input field
-            val imageName = inputField?.text?.toString()
-            if (imageUri != null && imageName != null) {
-                // Save the image URI to the database
-                val imageURI = imageUri.toString()
-                // Do something with the image URI
-            } else {
-                // Handle the case where imageUri or imageName is null
-            }
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null) {
+            // Get the URI of the selected image
+            val imageUri: Uri? = data.data
+            val imagePath = imageUri?.let { getRealPathFromURI(requireContext(), it) }
+            imageContainer.visibility = View.VISIBLE
+            imageView.setImageURI(imageUri)
+            imageURI = imagePath.toString()
         }
     }
+
+    // Helper function to get the real path of an image URI
+    private fun getRealPathFromURI(context: Context, uri: Uri): String? {
+        val cursor = context.contentResolver.query(uri, null, null, null, null)
+        cursor?.let {
+            if (it.moveToFirst()) {
+                val columnIndex = it.getColumnIndex(MediaStore.Images.Media.DATA)
+                if (columnIndex >= 0) {
+                    val path = it.getString(columnIndex)
+                    cursor.close()
+                    return path
+                }
+            }
+            cursor.close()
+        }
+        return null
+    }
+
 
 
     private fun cancel() {
