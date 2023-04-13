@@ -8,6 +8,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -16,6 +17,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.content.FileProvider
 import androidx.navigation.findNavController
 import com.example.remindme.MainActivity
 import com.example.remindme.R
@@ -24,6 +26,7 @@ import com.example.remindme.model.Reminder
 import com.google.android.material.textfield.TextInputEditText
 import com.mdev.apsche.database.ReminderDatabase
 import java.io.File
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -228,6 +231,7 @@ class ReminderActionFragment : Fragment() {
         val hasCamera = requireContext().packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)
         if (!hasCamera) {
             // Handle the case where the device doesn't have a camera
+            Toast.makeText(requireContext(), "This device doesn't have a camera", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -235,12 +239,43 @@ class ReminderActionFragment : Fragment() {
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         // Make sure there's a camera app to handle the intent
         if (cameraIntent.resolveActivity(requireActivity().packageManager) != null) {
-            // Start the camera activity and wait for a result
-            startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE)
+            // Create a file to store the image
+            val photoFile: File? = try {
+                createImageFile()
+            } catch (ex: IOException) {
+                // Error occurred while creating the File
+                Toast.makeText(requireContext(), "Error creating image file", Toast.LENGTH_SHORT).show()
+                null
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                // Get the URI for the file
+                val photoURI = FileProvider.getUriForFile(requireContext(),
+                    "com.your.package.name.fileprovider",
+                    photoFile)
+                // Add the URI to the intent
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                // Start the camera activity and wait for a result
+                startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE)
+            }
         } else {
             // Handle the case where there's no app to handle the intent
-            Toast.makeText(requireContext(), "Error Opening the camera!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "No camera app found to handle the intent", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    // Function to create the image file
+    @Throws(IOException::class)
+    private fun createImageFile(): File {
+        // Create an image file name
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val imageFileName = "JPEG_" + timeStamp + "_"
+        val storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile(
+            imageFileName,  /* prefix */
+            ".jpg",         /* suffix */
+            storageDir      /* directory */
+        )
     }
 
     // Handle the camera intent result
@@ -249,19 +284,22 @@ class ReminderActionFragment : Fragment() {
 
         // Check if the result is from the camera intent and is successful
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
-            // Get the captured image URI
-            val imageUri = data?.data
             // Get the image name from the input field
             val imageName = inputField?.text?.toString()
-            if (imageUri != null && imageName != null) {
-                // Save the image URI to the database
-                val imageURI = imageUri.toString()
-                // Do something with the image URI
+            // Get the path to the image file
+            val imageFilePath = currentPhotoPath
+            if (imageName != null && imageFilePath != null) {
+                // Save the image file path to the database
+                // Do something with the image file path
             } else {
-                // Handle the case where imageUri or imageName is null
+                // Handle the case where imageName or imageFilePath is null
             }
         }
     }
+
+    // Variable to store the current photo path
+    private var currentPhotoPath: String? = null
+
 
 
     private fun cancel() {
