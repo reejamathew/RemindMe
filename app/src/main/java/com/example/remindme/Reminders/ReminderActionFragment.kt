@@ -177,12 +177,19 @@ class ReminderActionFragment : Fragment() {
                 if(database.updateReminder(reminderId.toString(), title, description, imageURI, dateTime.toString(), RemindMeConstants.useremail)){
                     cancel()
                     // Create notification
-//                    createNotification(title, description, timestamp)
+                    val dateTimeFormatter = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.getDefault())
+                    val dateTime = dateTimeFormatter.parse(reminder.dateTime)
+                    val timestamp = dateTime.time
+                    createNotification(title, description, timestamp, view.context)
                 } else {
                     Toast.makeText(requireContext(), "Error updating reminder!", Toast.LENGTH_SHORT).show()
                 }
             } else {
                 if(database.insertReminder(title, description, dateTime.toString(), imageURI, RemindMeConstants.useremail)){
+                    val dateTimeFormatter = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.getDefault())
+                    val dateTime = dateTimeFormatter.parse(dateTime.toString())
+                    val timestamp = dateTime.time
+                    createNotification(title, description, timestamp, view.context)
                     cancel()
                 } else {
                     Toast.makeText(requireContext(), "Error adding reminder!", Toast.LENGTH_SHORT).show()
@@ -287,17 +294,17 @@ class ReminderActionFragment : Fragment() {
         cancelButton.findNavController().navigate(action)
     }
 
-    private fun createNotification(title: String, message: String, timestamp: Long) {
+    private fun createNotification(title: String, message: String, timestamp: Long, context: Context) {
         // Get the NotificationManager
-        val notificationManager = requireActivity().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         // Create an intent that will be triggered when the user taps on the notification
-        val intent = Intent(requireActivity(), MainActivity::class.java)
+        val intent = Intent(context, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        val pendingIntent = PendingIntent.getActivity(requireActivity(), 0, intent, 0)
+        val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
 
         // Create the notification
-        val builder = NotificationCompat.Builder(requireActivity(), "default")
+        val builder = NotificationCompat.Builder(context, "default")
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle(title)
             .setContentText(message)
@@ -313,6 +320,7 @@ class ReminderActionFragment : Fragment() {
         }
         notificationManager.notify(0, builder.build())
     }
+
 
 
     // Access the file
