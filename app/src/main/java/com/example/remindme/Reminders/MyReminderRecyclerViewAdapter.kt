@@ -1,6 +1,9 @@
 package com.mdev.apsche
 
 
+import android.Manifest
+import android.app.Activity
+import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.util.Log.*
 import android.view.LayoutInflater
@@ -8,6 +11,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.remindme.R
@@ -41,11 +48,16 @@ class MyReminderRecyclerViewAdapter(
         holder.date.text=reminderModel.dateTime
         if(reminderModel.img_location != ""){
             val imgFile = File(reminderModel.img_location)
-
             if (imgFile.exists()) {
-                val myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath())
+                val permission = Manifest.permission.READ_EXTERNAL_STORAGE
+                if (ContextCompat.checkSelfPermission(holder.itemView.context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(holder.itemView.context as Activity, arrayOf(permission), 123)
+                } else {
+                    // Load and display the image here
+                    val myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath())
+                    holder.image.setImageBitmap(myBitmap)
+                }
 
-                holder.image.setImageBitmap(myBitmap)
             }
         }
         var  reminderId = reminder[position].key!!

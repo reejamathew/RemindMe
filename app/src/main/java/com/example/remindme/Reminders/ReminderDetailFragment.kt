@@ -13,6 +13,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -91,12 +92,7 @@ class ReminderDetailFragment : Fragment() {
                     if (imgFile.exists()) {
                         if (reminder?.img_location != null) {
 
-                            val imgFile = File(reminder.img_location)
-
-                            if (imgFile.exists()) {
-                                val myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath())
-                                imageView.setImageBitmap(myBitmap)
-                            }
+                            checkAndRequestPermission()
                         }
                     }
                 }
@@ -181,5 +177,32 @@ class ReminderDetailFragment : Fragment() {
             imageView.setImageBitmap(bitmap)
         }
     }
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            // Permission is granted, load and display the image here
+            accessFile()
+        } else {
+            // Permission is denied, show a message to the user
+            Toast.makeText(requireContext(), "Permission denied", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun checkAndRequestPermission() {
+        val permission = Manifest.permission.READ_EXTERNAL_STORAGE
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                permission
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestPermissionLauncher.launch(permission)
+        } else {
+            // Permission is already granted, load and display the image here
+            accessFile()
+        }
+    }
+
 
 }

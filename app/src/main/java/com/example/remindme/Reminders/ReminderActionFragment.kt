@@ -16,6 +16,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -122,8 +123,7 @@ class ReminderActionFragment : Fragment() {
                     imageURI = reminder.img_location
 
                     if (imgFile.exists()) {
-                        val myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath())
-                        imageView.setImageBitmap(myBitmap)
+                        checkAndRequestPermission()
                         imageContainer.visibility = View.VISIBLE
                     }
                 }
@@ -315,7 +315,47 @@ class ReminderActionFragment : Fragment() {
     }
 
 
+    // Access the file
+    private fun accessFile() {
 
+        // Create a File object from the file path string
+        val file = File(reminder.img_location)
+
+        // Check if the file exists
+        if (file.exists()) {
+            // Create a Bitmap object from the file
+            val bitmap = BitmapFactory.decodeFile(file.absolutePath)
+
+            // Set the Bitmap as the image source for the ImageView
+            imageView.setImageBitmap(bitmap)
+        }
+    }
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            // Permission is granted, load and display the image here
+            accessFile()
+        } else {
+            // Permission is denied, show a message to the user
+            Toast.makeText(requireContext(), "Permission denied", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun checkAndRequestPermission() {
+        val permission = Manifest.permission.READ_EXTERNAL_STORAGE
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                permission
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestPermissionLauncher.launch(permission)
+        } else {
+            // Permission is already granted, load and display the image here
+            accessFile()
+        }
+    }
 
 
 }
