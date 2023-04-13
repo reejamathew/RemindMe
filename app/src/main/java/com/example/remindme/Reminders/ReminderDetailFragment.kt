@@ -1,10 +1,11 @@
 package com.example.remindme.authentication
 
+import android.Manifest
 import android.app.AlertDialog
+import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,15 +13,18 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.example.remindme.R
-import com.example.remindme.Reminders.ReminderActionFragmentDirections
 import com.example.remindme.model.Reminder
 import com.mdev.apsche.database.ReminderDatabase
 import java.io.File
 import java.io.FileNotFoundException
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 class ReminderDetailFragment : Fragment() {
 
@@ -33,6 +37,9 @@ class ReminderDetailFragment : Fragment() {
 
     private lateinit var reminder: Reminder
 
+    private val PERMISSIONS_REQUEST_CODE = 123
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,8 +47,6 @@ class ReminderDetailFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_reminder_detail, container, false)
-
-
         return  view
     }
 
@@ -84,16 +89,26 @@ class ReminderDetailFragment : Fragment() {
                     val imgFile = File(reminder.img_location)
 
                     if (imgFile.exists()) {
-//                        val myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath())
-//                       imageView.setImageBitmap(myBitmap)
-
-                        try {
-                            val inputStream = requireContext().contentResolver.openInputStream(Uri.parse(reminder.img_location))
-                            val bitmap = BitmapFactory.decodeStream(inputStream)
-                            imageView.setImageBitmap(bitmap)
-                        } catch (e: FileNotFoundException) {
-                            Toast.makeText(requireContext(), e.toString(), Toast.LENGTH_SHORT).show()
-                            e.printStackTrace()
+                        if (ContextCompat.checkSelfPermission(
+                                requireContext(),
+                                Manifest.permission.READ_EXTERNAL_STORAGE
+                            ) != PackageManager.PERMISSION_GRANTED ||
+                            ContextCompat.checkSelfPermission(
+                                requireContext(),
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                            ) != PackageManager.PERMISSION_GRANTED
+                        ) {
+                            ActivityCompat.requestPermissions(
+                                requireActivity(),
+                                arrayOf(
+                                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                                ),
+                                PERMISSIONS_REQUEST_CODE
+                            )
+                        } else {
+                            // You already have the necessary permissions
+                            accessFile();
                         }
                     }
                 }
@@ -139,4 +154,44 @@ class ReminderDetailFragment : Fragment() {
             }
         }
     }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            PERMISSIONS_REQUEST_CODE -> {
+                if (grantResults.isNotEmpty() &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                    grantResults[1] == PackageManager.PERMISSION_GRANTED
+                ) {
+                    // Permissions granted
+                    accessFile()
+
+                } else {
+                    // Permissions denied
+                    Toast.makeText(requireContext(), "Application do not have permission to access images!", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    // Access the file
+    private fun accessFile() {
+
+        // Create a File object from the file path string
+        val file = File(reminder.img_location)
+
+        // Check if the file exists
+        if (file.exists()) {
+            // Create a Bitmap object from the file
+            val bitmap = BitmapFactory.decodeFile(file.absolutePath)
+
+            // Set the Bitmap as the image source for the ImageView
+            imageView.setImageBitmap(bitmap)
+        }
+    }
+
 }

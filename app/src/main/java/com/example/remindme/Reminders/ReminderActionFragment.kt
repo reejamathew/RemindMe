@@ -137,7 +137,7 @@ class ReminderActionFragment : Fragment() {
                         // You already have the necessary permissions
                         val imageUri = Uri.parse(reminder.img_location)
                         imageURI = imageUri.toString()
-                        imageContainer.visibility = View.VISIBLE
+                        imageContainer.visibility = View.GONE
                         try {
                             val inputStream = requireContext().contentResolver.openInputStream(imageUri)
                             val bitmap = BitmapFactory.decodeStream(inputStream)
@@ -192,11 +192,7 @@ class ReminderActionFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            // Parse date and time inputs
-            val dateTimeFormatter = SimpleDateFormat("dd/MM/yyyy hh:mm", Locale.getDefault())
-            val dateTime = dateTimeFormatter.parse("$date $time")
-            val timestamp = dateTime.time
-
+            Toast.makeText(requireContext(), imageURI, Toast.LENGTH_SHORT).show()
             // Save item to database
             if (reminderId > 0 && reminder != null) {
                 if(database.updateReminder(reminderId.toString(), title, description, imageURI, dateTime.toString(), RemindMeConstants.useremail)){
