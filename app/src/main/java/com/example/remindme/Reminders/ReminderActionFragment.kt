@@ -1,15 +1,16 @@
 package com.example.remindme.Reminders
 
-import android.app.*
 
+import android.Manifest
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,21 +18,22 @@ import android.widget.*
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-
+import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.example.remindme.MainActivity
-
-
 import com.example.remindme.R
 import com.example.remindme.RemindMeConstants
 import com.example.remindme.model.Reminder
 import com.google.android.material.textfield.TextInputEditText
 import com.mdev.apsche.database.ReminderDatabase
-import java.io.File
+import java.io.FileNotFoundException
+import java.io.IOException
+import java.io.InputStream
+import java.net.MalformedURLException
+import java.net.URL
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
+
 
 class ReminderActionFragment : Fragment() {
     private lateinit var titleInput: TextInputEditText
@@ -48,6 +50,8 @@ class ReminderActionFragment : Fragment() {
     var myContext: Context? = null
     // Request code for opening the camera intent
     private val REQUEST_IMAGE_CAPTURE = 1
+
+    private val PERMISSIONS_REQUEST_CODE = 123
 
     // Define the request code
     private val PICK_IMAGE_REQUEST = 1
@@ -112,20 +116,36 @@ class ReminderActionFragment : Fragment() {
 
                 // set image location to global image location
                 if (reminder?.img_location != null) {
-                    val imageUri = Uri.parse(reminder.img_location)
-                    imageView.setImageURI(imageUri)
-                    imageContainer.visibility = View.VISIBLE
-
-
-//                    val permission = Manifest.permission.READ_EXTERNAL_STORAGE
-//                    if (ContextCompat.checkSelfPermission(requireContext(), permission) != PackageManager.PERMISSION_GRANTED) {
-//                        ActivityCompat.requestPermissions(requireActivity(), arrayOf(permission), 123)
-//                    } else {
-//                        // Permission is already granted
-//                        val imageUri = Uri.parse(reminder.img_location)
-//                        imageView.setImageURI(imageUri)
-//                        imageContainer.visibility = View.VISIBLE
-//                    }
+                    if (ContextCompat.checkSelfPermission(
+                            requireContext(),
+                            Manifest.permission.READ_EXTERNAL_STORAGE
+                        ) != PackageManager.PERMISSION_GRANTED ||
+                        ContextCompat.checkSelfPermission(
+                            requireContext(),
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        ) != PackageManager.PERMISSION_GRANTED
+                    ) {
+                        ActivityCompat.requestPermissions(
+                            requireActivity(),
+                            arrayOf(
+                                Manifest.permission.READ_EXTERNAL_STORAGE,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                            ),
+                            PERMISSIONS_REQUEST_CODE
+                        )
+                    } else {
+                        // You already have the necessary permissions
+                        val imageUri = Uri.parse(reminder.img_location)
+                        imageURI = imageUri.toString()
+                        imageContainer.visibility = View.VISIBLE
+                        try {
+                            val inputStream = requireContext().contentResolver.openInputStream(imageUri)
+                            val bitmap = BitmapFactory.decodeStream(inputStream)
+                            imageView.setImageBitmap(bitmap)
+                        } catch (e: FileNotFoundException) {
+                            e.printStackTrace()
+                        }
+                    }
                 }
 
 
@@ -318,6 +338,9 @@ class ReminderActionFragment : Fragment() {
         }
         notificationManager.notify(0, builder.build())
     }
+
+
+
 
 
 }

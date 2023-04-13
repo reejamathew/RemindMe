@@ -2,6 +2,7 @@ package com.example.remindme.authentication
 
 import android.app.AlertDialog
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -17,6 +18,7 @@ import com.example.remindme.Reminders.ReminderActionFragmentDirections
 import com.example.remindme.model.Reminder
 import com.mdev.apsche.database.ReminderDatabase
 import java.io.File
+import java.io.FileNotFoundException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -82,9 +84,17 @@ class ReminderDetailFragment : Fragment() {
                     val imgFile = File(reminder.img_location)
 
                     if (imgFile.exists()) {
-                        val myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath())
+//                        val myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath())
+//                       imageView.setImageBitmap(myBitmap)
 
-                       imageView.setImageBitmap(myBitmap)
+                        try {
+                            val inputStream = requireContext().contentResolver.openInputStream(Uri.parse(reminder.img_location))
+                            val bitmap = BitmapFactory.decodeStream(inputStream)
+                            imageView.setImageBitmap(bitmap)
+                        } catch (e: FileNotFoundException) {
+                            Toast.makeText(requireContext(), e.toString(), Toast.LENGTH_SHORT).show()
+                            e.printStackTrace()
+                        }
                     }
                 }
             }

@@ -2,18 +2,22 @@ package com.mdev.apsche
 
 
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.util.Log.*
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.remindme.R
 import com.example.remindme.Reminders.ReminderFragmentDirections
 import com.example.remindme.model.Reminder
 import java.io.File
+import java.io.FileNotFoundException
 
 
 /**
@@ -43,8 +47,15 @@ class MyReminderRecyclerViewAdapter(
 
             if (imgFile.exists()) {
                 val myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath())
+                try {
+                    val inputStream = holder.image.context.contentResolver.openInputStream(Uri.parse(reminderModel.img_location))
+                    val bitmap = BitmapFactory.decodeStream(inputStream)
+                    holder.image.setImageBitmap(bitmap)
+                } catch (e: FileNotFoundException) {
+                    Toast.makeText(holder.itemView.context, e.toString(), Toast.LENGTH_SHORT).show()
+                    e.printStackTrace()
+                }
 
-                holder.image.setImageBitmap(myBitmap)
             }
         }
         var  reminderId = reminder[position].key!!
