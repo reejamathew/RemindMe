@@ -89,26 +89,14 @@ class ReminderDetailFragment : Fragment() {
                     val imgFile = File(reminder.img_location)
 
                     if (imgFile.exists()) {
-                        if (ContextCompat.checkSelfPermission(
-                                requireContext(),
-                                Manifest.permission.READ_EXTERNAL_STORAGE
-                            ) != PackageManager.PERMISSION_GRANTED ||
-                            ContextCompat.checkSelfPermission(
-                                requireContext(),
-                                Manifest.permission.WRITE_EXTERNAL_STORAGE
-                            ) != PackageManager.PERMISSION_GRANTED
-                        ) {
-                            ActivityCompat.requestPermissions(
-                                requireActivity(),
-                                arrayOf(
-                                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                                ),
-                                PERMISSIONS_REQUEST_CODE
-                            )
-                        } else {
-                            // You already have the necessary permissions
-                            accessFile();
+                        if (reminder?.img_location != null) {
+
+                            val imgFile = File(reminder.img_location)
+
+                            if (imgFile.exists()) {
+                                val myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath())
+                                imageView.setImageBitmap(myBitmap)
+                            }
                         }
                     }
                 }
@@ -137,7 +125,7 @@ class ReminderDetailFragment : Fragment() {
                 }
             }
             builder.setNegativeButton("No") { _, _ ->
-                Toast.makeText(view.context, "Home", Toast.LENGTH_SHORT).show()
+                Toast.makeText(view.context, "Cancelled", Toast.LENGTH_SHORT).show()
             }
             val dialog = builder.create()
             dialog.show()

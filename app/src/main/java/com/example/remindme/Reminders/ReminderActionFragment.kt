@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.opengl.Visibility
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
@@ -26,6 +27,7 @@ import com.example.remindme.RemindMeConstants
 import com.example.remindme.model.Reminder
 import com.google.android.material.textfield.TextInputEditText
 import com.mdev.apsche.database.ReminderDatabase
+import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.io.InputStream
@@ -114,37 +116,15 @@ class ReminderActionFragment : Fragment() {
                 val inputFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.getDefault())
                 dateTime = inputFormat.parse(reminder.dateTime)
 
-                // set image location to global image location
                 if (reminder?.img_location != null) {
-                    if (ContextCompat.checkSelfPermission(
-                            requireContext(),
-                            Manifest.permission.READ_EXTERNAL_STORAGE
-                        ) != PackageManager.PERMISSION_GRANTED ||
-                        ContextCompat.checkSelfPermission(
-                            requireContext(),
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE
-                        ) != PackageManager.PERMISSION_GRANTED
-                    ) {
-                        ActivityCompat.requestPermissions(
-                            requireActivity(),
-                            arrayOf(
-                                Manifest.permission.READ_EXTERNAL_STORAGE,
-                                Manifest.permission.WRITE_EXTERNAL_STORAGE
-                            ),
-                            PERMISSIONS_REQUEST_CODE
-                        )
-                    } else {
-                        // You already have the necessary permissions
-                        val imageUri = Uri.parse(reminder.img_location)
-                        imageURI = imageUri.toString()
-                        imageContainer.visibility = View.GONE
-                        try {
-                            val inputStream = requireContext().contentResolver.openInputStream(imageUri)
-                            val bitmap = BitmapFactory.decodeStream(inputStream)
-                            imageView.setImageBitmap(bitmap)
-                        } catch (e: FileNotFoundException) {
-                            e.printStackTrace()
-                        }
+
+                    val imgFile = File(reminder.img_location)
+                    imageURI = reminder.img_location
+
+                    if (imgFile.exists()) {
+                        val myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath())
+                        imageView.setImageBitmap(myBitmap)
+                        imageContainer.visibility = View.VISIBLE
                     }
                 }
 
@@ -192,7 +172,6 @@ class ReminderActionFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            Toast.makeText(requireContext(), imageURI, Toast.LENGTH_SHORT).show()
             // Save item to database
             if (reminderId > 0 && reminder != null) {
                 if(database.updateReminder(reminderId.toString(), title, description, imageURI, dateTime.toString(), RemindMeConstants.useremail)){
